@@ -1,17 +1,22 @@
 #!/usr/bin/python3
 
 from miparser import Note, Track, Segment, Song
+from random import randint, seed, choice
+from copy import deepcopy
+
+from base_line import add_baseline
+from drums import add_drums
+
+
+se = randint(0, 1000000)
+print(se)
+seed(se)
 
 s = Song()
-t = Track(114)
-seg = Segment()
 
-seg.notes.add(Note(80, 0, 1))
-seg.notes.add(Note(80, 1, 1))
-t.segments.append(seg)
-s.tracks.append(t)
+s = add_baseline(s)
+s = add_drums(s)
 
-mid = s.toMidi(1000)
+mid = s.toMidi(64, 160)
 mid.save("testing.mid")
-
 
