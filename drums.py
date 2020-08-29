@@ -3,59 +3,34 @@ from random import randint, seed, choice, random
 from copy import deepcopy
 
 
-def add_drums(song, length=32, iterations=80):
-    def main_line():
-        se0 = Segment(length=length)
-
-        t = 0
+def add_drums(song, length=16, iterations=80):
+    def hihats():
+        n = list()
+        s = 0
         d = int(length / 8)
-
-        se0.addNote(Note(progression[0], t, d, channel=9))
-        t = t + 2 * d
-        se0.addNote(Note(progression[1], t, d, channel=9))
-        t = t + 2 * d
-        t = t + 2 * d
-        se0.addNote(Note(progression[3], t, d, channel=9))
-
-        return se0
-
-    def aggresive_var():
-        se0 = Segment(length=length)
-
-        t = 0
-        d = int(length / 16)
-
-        se0.addNote(Note(progression[1], t, d, channel=9))
-        t = t + 2 * d
-        se0.addNote(Note(progression[1], t, d, channel=9))
-        t = t + 2 * d
-        se0.addNote(Note(progression[1], t, d, channel=9))
-        t = t + 2 * d
-        se0.addNote(Note(progression[1], t, d, channel=9))
-        t = t + 2 * d
-        se0.addNote(Note(progression[1], t, d, channel=9))
-        t = t + 2 * d
-        se0.addNote(Note(progression[1], t, d, channel=9))
-        t = t + 2 * d
-        se0.addNote(Note(progression[2], t, 3 * d, channel=9))
-
-        return se0
-
-
-
-    progression = [choice(range(30, 50)) for i in range(5)]
+        for i in range(8):
+            n.append(Note(hihats, s, d, channel=9))
+            s = s + d
+        return n
 
     t = Track(100, volume=10)
     song.tracks.append(t)
 
-    se0 = main_line()
-    se1 = aggresive_var()
+    hihats = 42
+    drum = 36
 
     for i in range(iterations):
-        r = random()
-        if r < .90:
-            t.segments.append(se0)
-        else:
-            t.segments.append(se1)
+        se0 = Segment(length=length)
+
+        se0.addNote(Note(drum, 0, int(length/4), channel=9))
+        se0.addNote(Note(drum, int(length/2), int(length/4), channel=9))
+
+        s = 0
+        d = int(length/2)
+        for i in range(2):
+            se0.addNote(Note(hihats, s, d, channel=9))
+            s = s + d
+
+        t.segments.append(se0)
 
     return song
