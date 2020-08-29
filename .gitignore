@@ -1,5 +1,5 @@
 
 __pycache__
 *.mid
-
-main.py
+*.mkv
+*.wav
