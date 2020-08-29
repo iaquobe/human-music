@@ -5,93 +5,83 @@ from copy import deepcopy
 
 def add_baseline(song, bases=None, length=128, iterations=20):
     def rbase():
-        return choice(range(nbases))
+        return randint(0, len(bases) - 1)
+
 
     def main_line():
         se0 = Segment(length=length)
 
-        b1 = rbase()
-        b2 = rbase()
-        b3 = rbase()
+        t = 0
+        d = int(length / 4)
+
+        se0.addNote(Note(prog[0], t, d, channel=rbase()))
+        t = t + d
+        se0.addNote(Note(prog[1], t, d, channel=rbase()))
+        t = t + d
+        se0.addNote(Note(prog[2], t, d, channel=rbase()))
+        t = t + d
+        se0.addNote(Note(prog[1], t, d, channel=rbase()))
+
+        return se0
+
+
+    def alt_line(main):
+        se0 = deepcopy(main)
 
         t = 0
         d = int(length / 4)
 
-        se0.addNote(Note(progression[0], t, d, channel=rbase()))
-        t = t + d
-        se0.addNote(Note(progression[1], t, d, channel=rbase()))
-        t = t + d
-        se0.addNote(Note(progression[2], t, d, channel=rbase()))
-        t = t + d
-        se0.addNote(Note(progression[3], t, d, channel=rbase()))
+        for note in se0.notes:
+            if note.start == 3 * d:
+                note.note = prog[3]
+                note.channel = rbase()
 
         return se0
 
-    def tense_var0(se0):
-        se1 = deepcopy(se0)
 
-        note = choice(list(se1.notes))
-        se1.notes.remove(note)
-       
-        t = note.start 
-        d = int(length / 16)
+    def tense_line(main):
+        se0 = deepcopy(main)
 
-        se1.addNote(Note(progression[1], t, d, note.channel))
-        t = t + d
-        se1.addNote(Note(progression[1], t, d, note.channel))
-        t = t + d
-        t = t + d
-        se1.addNote(Note(progression[2], t, d, note.channel))
+        d = int(length / 4)
 
-        return se1
+        drop = choice(list(se0.notes))
+        d2 = choice(list(se0.notes))
 
-    def tense_var1(se0):
-        se1 = deepcopy(se0)
+        if abs(drop.start - d2.start) == d:
+            se0.notes.remove(d2)
+        se0.notes.remove(drop)
 
-        note = choice(list(se1.notes))
-        se1.notes.remove(note)
-       
-        t = note.start 
-        d = int(length / 32)
+        n = 2**randint(1, 3)
+        d = int(d / n)
 
-        se1.addNote(Note(note.note, t, d, note.channel))
-        t = t + d
-        se1.addNote(Note(note.note, t, d, note.channel))
-        t = t + d
-        se1.addNote(Note(note.note, t, d, note.channel))
-        t = t + d
-        se1.addNote(Note(note.note, t, d, note.channel))
-        t = t + d
-        t = t + d
-        t = t + d
-        t = t + d
-        se1.addNote(Note(progression[2], t, d, note.channel))
+        s = drop.start
 
-        return se1
+        for i in range(int(n)):
+            se0.addNote(Note(drop.note, s, d, channel=drop.channel))
+            s = s + d
 
+        return se0 
 
 
     if bases == None:
-        nbases = randint(2, 5)
-        bases = [choice(range(80, 88)) for i in range(nbases)]
+        bases = [choice(range(80, 88)) for i in range(4)]
 
     t = Track(bases, volume=127)
     song.tracks.append(t)
     
-    progression = [choice(range(20, 40)) for i in range(5)]
+    prog = sorted([randint(20, 40) for i in range(4)])
 
     se0 = main_line() 
-    se1 = tense_var0(se0)
-    se2 = tense_var1(se0)
+    se1 = alt_line(se0)
+    se2 = tense_line(se0)
     
-    for i in range(iterations):
+    for i in range(int(iterations / 2)):
         r = random()
-        if r < .5:
+        if r < .9:
             t.segments.append(se0)
-        elif r < .75:
-            t.segments.append(se2)
         else:
-            t.segments.append(se1)
+            t.segments.append(se2)
+        t.segments.append(se1)
 
 
     return song
