@@ -18,5 +18,5 @@ s = add_baseline(s)
 s = add_drums(s)
 
 mid = s.toMidi(64, 160)
-mid.save("testing.mid")
+mid.save("mid.mid")
 
