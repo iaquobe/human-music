@@ -2,11 +2,10 @@ from mido import MidiFile, MidiTrack, Message, MetaMessage
 from mido import bpm2tempo
 
 class Note:
-    def __init__(self, note, start, duration, channel=0):
+    def __init__(self, note, start, duration):
         self.note       = note
         self.start      = start
         self.duration   = duration
-        self.channel    = channel
 
 
 
@@ -19,7 +18,7 @@ class Segment:
         if note.start + note.duration <= self.length:
             self.notes.add(note)
 
-    def toMidi(self, track, tpb, off=0):
+    def toMidi(self, track, channel, off=0):
         events = dict()
         for note in self.notes:
             if note.start not in events:
@@ -34,8 +33,8 @@ class Segment:
         for k in sorted(events):
             for event in events[k]:
                 msg, note = event
-                time = tpb * (k - last)
-                track.append(Message(msg, note=note.note, channel=note.channel, velocity=100, time=time))
+                time = k - last
+                track.append(Message(msg, note=note.note, channel=channel, velocity=100, time=time))
                 last = k
 
         return self.length - last
@@ -43,37 +42,45 @@ class Segment:
 
 
 class Track:
-    def __init__(self, instruments, volume=100):
+    def __init__(self, instrument, channel, volume=100):
         self.segments   = []
-        if isinstance(instruments, int):
-            instruments = [instruments]
-        self.instruments = instruments
+        self.instrument = instrument
+        self.channel = channel
         self.volume = volume
 
-    def toMidi(self, track, tpb):
-        track.append(Message("control_change", channel=0, control=7, value=self.volume, time=0))
-
-        for i in range(len(self.instruments)):
-            track.append(Message("program_change", channel=i, program=self.instruments[i], time=0))
+    def toMidi(self, track):
+        track.append(Message("control_change", channel=self.channel, control=7, value=self.volume, time=0))
+        track.append(Message("program_change", channel=self.channel, program=self.instrument, time=0))
         
         off = 0
         for segment in self.segments:
-            off = segment.toMidi(track, tpb, off=off)
+            off = segment.toMidi(track, off=off, channel=self.channel)
 
         track.append(MetaMessage("end_of_track", time=0))
 
 
 
 class Song:
-    def __init__(self):
+    def __init__(self, bpm=120, tpb=16):
         self.tracks = []
+        self.bpm = bpm
+        self.tpb = tpb
+        self.last_channel = 0
 
-    def toMidi(self, tpb, bpm):
-        m = MidiFile()
+    def newTrack(self, instrument, volume=100, channel=None):
+        if channel is not None:
+            return Track(instrument, channel, volume)
+
+        t = Track(instrument, self.last_channel, volume)
+        self.last_channel = self.last_channel + 1
+        return t
+
+    def toMidi(self):
+        m = MidiFile(ticks_per_beat=self.tpb)
 
         metatrack = MidiTrack()
         metatrack.append(MetaMessage("time_signature", numerator=6, denominator=8, clocks_per_click=18, notated_32nd_notes_per_beat=8, time=0))
-        metatrack.append(MetaMessage("set_tempo", tempo=bpm2tempo(bpm), time=0))
+        metatrack.append(MetaMessage("set_tempo", tempo=bpm2tempo(self.bpm), time=0))
         metatrack.append(MetaMessage("end_of_track", time=0))
 
         m.tracks.append(metatrack)
@@ -81,7 +88,7 @@ class Song:
         for track in self.tracks:
             t = MidiTrack()
             m.tracks.append(t)
-            track.toMidi(t, tpb)
+            track.toMidi(t)
 
         return m
    

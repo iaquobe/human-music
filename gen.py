@@ -4,7 +4,8 @@ from miparser import Note, Track, Segment, Song
 from random import randint, seed, choice
 from copy import deepcopy
 
-from base_line import add_baseline
+from bass import add_bass
+from bass_guitar import add_bass_guitar
 from drums import add_drums
 
 
@@ -12,11 +13,14 @@ se = randint(0, 1000000)
 print(se)
 seed(se)
 
-s = Song()
+tpb = 16
+bpm = 81
 
-s = add_baseline(s)
-s = add_drums(s)
+s = Song(tpb, bpm)
 
-mid = s.toMidi(64, 160)
+s = add_bass_guitar(s, tpb=tpb)
+s = add_bass(s, tpb=tpb)
+
+mid = s.toMidi()
 mid.save("mid.mid")
 
