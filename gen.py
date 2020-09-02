@@ -22,5 +22,5 @@ s = add_bass_guitar(s, tpb=tpb)
 s = add_bass(s, tpb=tpb)
 
 mid = s.toMidi()
-mid.save("mid.mid")
+mid.save("data/mid.mid")
 

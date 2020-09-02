@@ -1,3 +1,3 @@
 #!/bin/bash
 
-youtube-upload -t "$1" --privacy public vid.mkv
+youtube-upload -t "$1" --privacy public "$2"
