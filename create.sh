@@ -1,7 +1,6 @@
 #!/bin/bash
 
 dir="$(pwd)/$(dirname "$0")"
-echo $dir
 
 $dir/gen.py $dir/data/mid.mid
 
