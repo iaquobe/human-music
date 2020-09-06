@@ -26,7 +26,8 @@ def add_bass(song, length=8, iterations=20, tpb=64):
     se0.addNote(Note(prog[4], tt(7), tt(1)))
 
 
-    t.segments.append(se0)
-    t.segments.append(se0)
+    for i in range(int(iterations/2)):
+        t.segments.append(se0)
+        t.segments.append(se0)
 
     return song

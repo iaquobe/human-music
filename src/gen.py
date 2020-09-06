@@ -25,6 +25,7 @@ s = Song(tpb, bpm)
 
 s = add_bass_guitar(s, tpb=tpb)
 s = add_bass(s, tpb=tpb)
+s = add_drums(s, tpb=tpb)
 
 mid = s.toMidi()
 mid.save(out)
