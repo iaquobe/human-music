@@ -1,10 +1,13 @@
 #!/bin/bash
 
-./gen.py
+dir="$(pwd)/$(dirname "$0")"
+echo $dir
 
-timidity data/mid.mid -Ow -o data/wav.wav 1>/dev/null
+$dir/gen.py $dir/data/mid.mid
 
-ffmpeg -y -loop 1 -framerate 1 -i cassetti.jpg -i data/wav.wav -c copy -shortest data/vid.mkv 1>/dev/null
+timidity $dir/data/mid.mid -Ow -o $dir/data/wav.wav 1>/dev/null
+
+ffmpeg -y -loop 1 -framerate 1 -i $dir/cassetti.jpg -i $dir/data/wav.wav -c copy -shortest $dir/data/vid.mkv 1>/dev/null
 
 
 
