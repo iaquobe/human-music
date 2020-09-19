@@ -3,7 +3,7 @@ from random import randint, seed, choice, random
 from copy import deepcopy
 
 
-def add_bass(song, length=8, iterations=20, tpb=64):
+def add_bass(song, length=8, iterations=10, tpb=64):
     def tt(beats):
         return int(beats * tpb)
 

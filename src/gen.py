@@ -18,8 +18,8 @@ se = randint(0, 1000000)
 print(se)
 seed(se)
 
-tpb = 16
-bpm = 81
+tpb = 64
+bpm = randint(80,120)
 
 s = Song(tpb, bpm)
 
