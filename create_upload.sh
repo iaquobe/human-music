@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dir="$(pwd)/$(dirname "$0")"
+dir="$(dirname $(realpath $0))"
 
 $dir/src/gen.py $dir/data/mid.mid
 
