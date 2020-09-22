@@ -19,7 +19,7 @@ print(se)
 seed(se)
 
 tpb = 64
-bpm = randint(80,120)
+bpm = randint(70,120)
 
 s = Song(tpb, bpm)
 

@@ -4,20 +4,20 @@ from copy import deepcopy
 
 
 def add_bass_guitar(song, length=2, iterations=20, tpb=64):
-    def tt(beats):
-        return int(beats * tpb)
+    ticks = length * tpb
 
     instrument = 36
 
-    t = song.newTrack(instrument, volume=100)
-    song.tracks.append(t)
+    track = song.newTrack(instrument, volume=100)
     
-    prog = [randint(30, 40) for i in range(5)]
+    note = [randint(30, 40) for i in range(5)]
 
-    se0 = Segment(length * tpb)
-    se0.addNote(Note(prog[0], tt(0), tt(2/4)))
+    seg = Segment(ticks)
+    seg.addNote(Note(note[0], 0, 2*tpb))
     
     for i in range(iterations):
-        t.segments.append(se0)
+        track.segments.append(seg)
+
+    song.tracks.append(track)
 
     return song

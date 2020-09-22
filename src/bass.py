@@ -4,30 +4,52 @@ from copy import deepcopy
 
 
 def add_bass(song, length=8, iterations=10, tpb=64):
-    def tt(beats):
-        return int(beats * tpb)
 
-    instrument = 82
+    def melody():
+        se = Segment(ticks)
+        se.addNote(Note(noteMelody[0], 0*tpb, tpb))
+        se.addNote(Note(noteMelody[1], 1*tpb, tpb))
+        se.addNote(Note(noteMelody[2], 2*tpb, tpb))
+        se.addNote(Note(noteMelody[3], 3*tpb, tpb))
+        
+        se.addNote(Note(noteMelody[0], 4*tpb, tpb))
+        se.addNote(Note(noteMelody[1], 5*tpb, tpb))
+        se.addNote(Note(noteMelody[2], 6*tpb, tpb))
+        se.addNote(Note(noteMelody[4], 7*tpb, tpb))
 
-    t = song.newTrack(instrument, volume=127)
-    song.tracks.append(t)
-    
-    prog = [randint(30, 50) for i in range(5)]
+        return se
 
-    se0 = Segment(length * tpb)
-    se0.addNote(Note(prog[0], tt(0), tt(1)))
-    se0.addNote(Note(prog[1], tt(1), tt(1)))
-    se0.addNote(Note(prog[2], tt(2), tt(1)))
-    se0.addNote(Note(prog[3], tt(3), tt(1)))
-    
-    se0.addNote(Note(prog[0], tt(4), tt(1)))
-    se0.addNote(Note(prog[1], tt(5), tt(1)))
-    se0.addNote(Note(prog[2], tt(6), tt(1)))
-    se0.addNote(Note(prog[4], tt(7), tt(1)))
+    def low():
+        se = Segment(ticks)
+        se.addNote(Note(noteLow, tpb, 4*tpb))
 
+        return se
 
-    for i in range(int(iterations/2)):
-        t.segments.append(se0)
-        t.segments.append(se0)
+    ticks = length * tpb
+
+    instrumentMelody = randint(81,88)
+    instrumentLow = 81
+
+    noteMelody = [randint(30, 50) for i in range(5)]
+    noteLow = randint(10, 30)
+
+    segEmpty = Segment(ticks)
+    segMelody = melody()
+    segLow = low()
+
+    trackMelody = song.newTrack(instrumentMelody, volume=100)
+    trackLow = song.newTrack(instrumentLow, volume=100)
+
+    for i in range(iterations):
+        trackMelody.segments.append(segMelody)
+
+        r = random()
+        if r < .8:
+            trackLow.segments.append(segEmpty)
+        else:
+            trackLow.segments.append(segLow)
+
+    song.tracks.append(trackMelody)
+    song.tracks.append(trackLow)
 
     return song

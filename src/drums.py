@@ -47,7 +47,7 @@ def add_drums(song, length=2, iterations=40, tpb=64):
     segHihat1 = hihats1()
 
     trackDrum  = Track(36, 9, volume=100)
-    trackHihat = Track(42, 9, volume=100)
+    trackHihat = Track(42, 9, volume=randint(50,100))
 
     for i in range(iterations):
         r = random()

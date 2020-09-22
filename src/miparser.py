@@ -18,7 +18,7 @@ class Segment:
         if note.start + note.duration <= self.length:
             self.notes.add(note)
 
-    def toMidi(self, track, channel, off=0):
+    def toMidi(self, track, channel, instrument, volume, off=0):
         events = dict()
         for note in self.notes:
             if note.start not in events:
@@ -34,6 +34,8 @@ class Segment:
             for event in events[k]:
                 msg, note = event
                 time = k - last
+                track.append(Message("control_change", channel=channel, control=7, value=volume, time=0))
+                track.append(Message("program_change", channel=channel, program=instrument, time=0))
                 track.append(Message(msg, note=note.note, channel=channel, velocity=100, time=time))
                 last = k
 
@@ -49,12 +51,10 @@ class Track:
         self.volume = volume
 
     def toMidi(self, track):
-        track.append(Message("control_change", channel=self.channel, control=7, value=self.volume, time=0))
-        track.append(Message("program_change", channel=self.channel, program=self.instrument, time=0))
         
         off = 0
         for segment in self.segments:
-            off = segment.toMidi(track, off=off, channel=self.channel)
+            off = segment.toMidi(track, self.channel, self.instrument, self.volume, off=off)
 
         track.append(MetaMessage("end_of_track", time=0))
 
