@@ -38,7 +38,7 @@ def add_bass(song, length=8, iterations=10, tpb=64):
     segLow = low()
 
     trackMelody = song.newTrack(instrumentMelody, volume=100)
-    trackLow = song.newTrack(instrumentLow, volume=100)
+    trackLow = song.newTrack(instrumentLow, volume=127)
 
     for i in range(iterations):
         trackMelody.segments.append(segMelody)
